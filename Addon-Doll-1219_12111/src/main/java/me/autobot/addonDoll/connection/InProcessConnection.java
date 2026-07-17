@@ -23,7 +23,7 @@ public class InProcessConnection extends Connection {
     public void connect(GameProfile profile, Player caller) {
         // keep permission plugin compatibility, as the old login listener did
         Thread preLogin = new Thread(() -> {
-            AsyncPlayerPreLoginEvent preLoginEvent = new AsyncPlayerPreLoginEvent(profile.getName(), InetAddress.getLoopbackAddress(), profile.getId());
+            AsyncPlayerPreLoginEvent preLoginEvent = new AsyncPlayerPreLoginEvent(profile.name(), InetAddress.getLoopbackAddress(), profile.id());
             preLoginEvent.setLoginResult(AsyncPlayerPreLoginEvent.Result.ALLOWED);
             preLoginEvent.setKickMessage("PlayerDoll");
             Bukkit.getPluginManager().callEvent(preLoginEvent);
@@ -34,14 +34,14 @@ public class InProcessConnection extends Connection {
 
     private void spawn(GameProfile profile, Player caller) {
         MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
-        if (server.getPlayerList().getPlayer(profile.getId()) != null) {
+        if (server.getPlayerList().getPlayer(profile.id()) != null) {
             return;
         }
         ServerDoll doll = ServerDoll.callSpawn(profile);
         doll.setup(caller);
 
         DollConnection connection = new DollConnection(doll);
-        DOLL_CONNECTIONS.put(profile.getId(), connection);
+        DOLL_CONNECTIONS.put(profile.id(), connection);
         // register for Connection#tick (listener tick / disconnection handling)
         server.getConnection().getConnections().add(connection);
 

@@ -1,6 +1,7 @@
 package me.autobot.playerdoll.api.command.subcommand.builtin;
 
 import com.mojang.authlib.GameProfile;
+import me.autobot.playerdoll.api.doll.ProfileUtil;
 import com.mojang.brigadier.context.CommandContext;
 import me.autobot.playerdoll.api.FileUtil;
 import me.autobot.playerdoll.api.LangFormatter;
@@ -47,21 +48,21 @@ public class PSet extends SubCommand implements DollCommandExecutor {
             return;
         }
         DollConfig config = DollConfig.getOnlineConfig(target.getUniqueId());
-        Map<PersonalFlagButton, Boolean> flagMap = config.playerSetting.get(profile.getId());
+        Map<PersonalFlagButton, Boolean> flagMap = config.playerSetting.get(ProfileUtil.id(profile));
         if (flagMap == null) {
             // Setup all default value for new player
             LinkedHashMap<PersonalFlagButton, Boolean> defaultMap = new LinkedHashMap<>();
             var list = InvButton.getButtons().values().stream().filter(b -> b instanceof PersonalFlagButton).map(b -> (PersonalFlagButton)b).toList();
             list.forEach(b -> defaultMap.put(b, false));
-            config.playerSetting.put(profile.getId(), defaultMap);
+            config.playerSetting.put(ProfileUtil.id(profile), defaultMap);
 
-            DollMenuHolder.HOLDERS.get(target.getUniqueId()).getPSetMenu(Bukkit.getOfflinePlayer(profile.getId()));
-            flagMap = config.playerSetting.get(profile.getId());
+            DollMenuHolder.HOLDERS.get(target.getUniqueId()).getPSetMenu(Bukkit.getOfflinePlayer(ProfileUtil.id(profile)));
+            flagMap = config.playerSetting.get(ProfileUtil.id(profile));
         }
         flagMap.put(flagType, toggle);
 
         if (flagType == PersonalFlagButton.HIDDEN) {
-            Player psetPlayer = Bukkit.getPlayer(profile.getId());
+            Player psetPlayer = Bukkit.getPlayer(ProfileUtil.id(profile));
             if (psetPlayer == null) {
                 return;
             }
@@ -77,7 +78,7 @@ public class PSet extends SubCommand implements DollCommandExecutor {
 
     private void openGUI() {
         if (sender instanceof Player player) {
-            player.openInventory(DollMenuHolder.HOLDERS.get(target.getUniqueId()).getPSetMenu(Bukkit.getOfflinePlayer(profile.getId())).getInventory());
+            player.openInventory(DollMenuHolder.HOLDERS.get(target.getUniqueId()).getPSetMenu(Bukkit.getOfflinePlayer(ProfileUtil.id(profile))).getInventory());
         }
     }
 
@@ -110,7 +111,7 @@ public class PSet extends SubCommand implements DollCommandExecutor {
         }
         // Not allow Doll pset
         FileUtil fileUtil = PlayerDollAPI.getFileUtil();
-        if (fileUtil.getFile(fileUtil.getDollDir(), DollNameUtil.dollShortName(profile.getName()) + ".yml").exists()) {
+        if (fileUtil.getFile(fileUtil.getDollDir(), DollNameUtil.dollShortName(ProfileUtil.name(profile)) + ".yml").exists()) {
             sender.sendMessage(LangFormatter.YAMLReplaceMessage("doll-pset"));
             return 0;
         }

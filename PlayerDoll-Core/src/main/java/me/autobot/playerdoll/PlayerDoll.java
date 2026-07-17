@@ -1,6 +1,7 @@
 package me.autobot.playerdoll;
 
 import com.mojang.authlib.GameProfile;
+import me.autobot.playerdoll.api.doll.ProfileUtil;
 import com.mojang.authlib.properties.Property;
 import me.autobot.playerdoll.api.*;
 import me.autobot.playerdoll.api.command.CommandBuilder;
@@ -200,8 +201,8 @@ public final class PlayerDoll extends JavaPlugin implements PlayerDollPlugin {
             // auto Join
             if (config.dollSetting.get(GlobalFlagButton.JOIN_AT_START).getValue()) {
                 GameProfile profile = new GameProfile(UUID.fromString(config.dollUUID.getValue()), dollIdentifier.concat(config.dollName.getValue()));
-                profile.getProperties().clear();
-                profile.getProperties().put("textures", new Property("textures", config.skinProperty.getValue(), config.skinSignature.getValue()));
+                ProfileUtil.properties(profile).clear();
+                ProfileUtil.properties(profile).put("textures", new Property("textures", config.skinProperty.getValue(), config.skinSignature.getValue()));
                 Runnable r = () -> dollConnection.connect(profile, null);
                 PlayerDollAPI.getScheduler().globalTaskDelayed(r, delayOfEach * 20 * index);
                 index++;

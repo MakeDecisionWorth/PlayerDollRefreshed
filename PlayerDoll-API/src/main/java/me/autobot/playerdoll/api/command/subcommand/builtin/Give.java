@@ -1,6 +1,7 @@
 package me.autobot.playerdoll.api.command.subcommand.builtin;
 
 import com.mojang.authlib.GameProfile;
+import me.autobot.playerdoll.api.doll.ProfileUtil;
 import com.mojang.brigadier.context.CommandContext;
 import me.autobot.playerdoll.api.FileUtil;
 import me.autobot.playerdoll.api.LangFormatter;
@@ -34,20 +35,20 @@ public class Give extends SubCommand implements DollCommandExecutor {
             UUID oldOwnerUUID = UUID.fromString(dollConfig.ownerUUID.getValue());
 
             // Prevent OP / bypass permission give affect the count
-            if (!oldOwnerUUID.equals(profile.getId())) {
+            if (!oldOwnerUUID.equals(ProfileUtil.id(profile))) {
                 int oldOwnerCount = creationCounts.get(oldOwnerUUID);
-                Integer newOwnerCount = creationCounts.get(profile.getId());
+                Integer newOwnerCount = creationCounts.get(ProfileUtil.id(profile));
                 if (newOwnerCount == null) {
                     newOwnerCount = 0;
                 }
 
                 creationCounts.put(oldOwnerUUID,oldOwnerCount-1);
-                creationCounts.put(profile.getId(),newOwnerCount+1);
+                creationCounts.put(ProfileUtil.id(profile),newOwnerCount+1);
             }
         }
 
-        dollConfig.ownerName.setNewValue(profile.getName());
-        dollConfig.ownerUUID.setNewValue(profile.getId().toString());
+        dollConfig.ownerName.setNewValue(ProfileUtil.name(profile));
+        dollConfig.ownerUUID.setNewValue(ProfileUtil.id(profile).toString());
         dollConfig.saveConfig();
         sender.sendMessage(LangFormatter.YAMLReplaceMessage("DollGiver",targetString));
         //target.sendMessage(LangFormatter.YAMLReplaceMessage("DollGetter",player.getName()));
@@ -75,19 +76,19 @@ public class Give extends SubCommand implements DollCommandExecutor {
             return 0;
         }
 
-        Player newOwner = Bukkit.getPlayer(profile.getId());
+        Player newOwner = Bukkit.getPlayer(ProfileUtil.id(profile));
         if (newOwner == null) {
             sender.sendMessage(LangFormatter.YAMLReplaceMessage("player-offline"));
             return 0;
         }
 
-        if (targetString.equalsIgnoreCase(profile.getName())) {
+        if (targetString.equalsIgnoreCase(ProfileUtil.name(profile))) {
             sender.sendMessage(LangFormatter.YAMLReplaceMessage("self-give"));
             return 0;
         }
 
         FileUtil fileUtil = PlayerDollAPI.getFileUtil();
-        if (fileUtil.getFile(fileUtil.getDollDir(), DollNameUtil.dollShortName(profile.getName()) + ".yml").exists()) {
+        if (fileUtil.getFile(fileUtil.getDollDir(), DollNameUtil.dollShortName(ProfileUtil.name(profile)) + ".yml").exists()) {
             sender.sendMessage(LangFormatter.YAMLReplaceMessage("doll-give"));
             return 0;
         }

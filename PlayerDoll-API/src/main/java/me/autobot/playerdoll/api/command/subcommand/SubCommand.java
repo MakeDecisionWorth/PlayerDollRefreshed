@@ -1,6 +1,7 @@
 package me.autobot.playerdoll.api.command.subcommand;
 
 import com.mojang.authlib.GameProfile;
+import me.autobot.playerdoll.api.doll.ProfileUtil;
 import me.autobot.playerdoll.api.LangFormatter;
 import me.autobot.playerdoll.api.doll.DollConfig;
 import me.autobot.playerdoll.api.doll.DollNameUtil;
@@ -51,7 +52,7 @@ public abstract class SubCommand {
             return true;
         }
         // If offlinePlayer is null, the player is never joined before;
-        return Bukkit.getOfflinePlayer(profile.getId()).getName() != null;
+        return Bukkit.getOfflinePlayer(ProfileUtil.id(profile)).getName() != null;
     }
     protected boolean executeIfManage(String input) {
         if (fromManageCommand(input)) {

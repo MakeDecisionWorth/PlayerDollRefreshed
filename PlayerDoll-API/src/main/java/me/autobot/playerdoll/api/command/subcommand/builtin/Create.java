@@ -1,6 +1,7 @@
 package me.autobot.playerdoll.api.command.subcommand.builtin;
 
 import com.mojang.authlib.GameProfile;
+import me.autobot.playerdoll.api.doll.ProfileUtil;
 import com.mojang.authlib.properties.Property;
 import com.mojang.brigadier.context.CommandContext;
 import me.autobot.playerdoll.api.FileUtil;
@@ -51,13 +52,13 @@ public class Create extends SubCommand implements DollCommandExecutor {
         dollConfig.ownerName.setNewValue(sender.getName());
         dollConfig.ownerUUID.setNewValue(sender.getUniqueId().toString());
         if (profile != null) {
-            if (!profile.getProperties().get("textures").isEmpty()) {
-                Property property = profile.getProperties().get("textures").iterator().next();
+            if (!ProfileUtil.properties(profile).get("textures").isEmpty()) {
+                Property property = ProfileUtil.properties(profile).get("textures").iterator().next();
                 dollConfig.skinProperty.setNewValue(property.value());
                 dollConfig.skinSignature.setNewValue(property.signature());
             }
         } else if (fetchProfile != null) {
-            Property property = fetchProfile.getProperties().get("textures").iterator().next();
+            Property property = ProfileUtil.properties(fetchProfile).get("textures").iterator().next();
             dollConfig.skinProperty.setNewValue(property.value());
             dollConfig.skinSignature.setNewValue(property.signature());
         }

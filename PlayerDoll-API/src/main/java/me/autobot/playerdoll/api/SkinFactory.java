@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
+import me.autobot.playerdoll.api.doll.ProfileUtil;
 import com.mojang.authlib.properties.Property;
 
 import java.io.IOException;
@@ -45,7 +46,7 @@ public class SkinFactory {
         propertyValue = propertyObject.getAsJsonPrimitive("value").getAsString();
 
         GameProfile profile = new GameProfile(getUUIDFromStripedUUID(stringUUID), name);
-        profile.getProperties().put("textures", new Property("textures", propertyValue, propertySignature));
+        ProfileUtil.properties(profile).put("textures", new Property("textures", propertyValue, propertySignature));
 
         return profile;
     }

@@ -1,6 +1,7 @@
 package me.autobot.playerdoll.api.command.subcommand.builtin;
 
 import com.mojang.authlib.GameProfile;
+import me.autobot.playerdoll.api.doll.ProfileUtil;
 import com.mojang.authlib.properties.Property;
 import com.mojang.brigadier.context.CommandContext;
 import me.autobot.playerdoll.api.FileUtil;
@@ -92,8 +93,8 @@ public class Spawn extends SubCommand implements DollCommandExecutor {
 
 
         profile = new GameProfile(targetUUID, basicConfig.dollIdentifier.getValue() + targetString);
-        profile.getProperties().clear();
-        profile.getProperties().put("textures", new Property("textures", offlineConfig.skinProperty.getValue(), offlineConfig.skinSignature.getValue()));
+        ProfileUtil.properties(profile).clear();
+        ProfileUtil.properties(profile).put("textures", new Property("textures", offlineConfig.skinProperty.getValue(), offlineConfig.skinSignature.getValue()));
 
         if (executeIfManage(context.getInput())) {
             return 1;
