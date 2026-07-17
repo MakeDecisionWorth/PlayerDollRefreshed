@@ -15,11 +15,17 @@ public class DollCommandSource {
         Class<?> commandSourceStackClass = ReflectionUtil.getNMClass("commands.CommandSourceStack");
         Objects.requireNonNull(commandSourceStackClass, "CommandSourceStack.class");
 
-        getBukkitSenderMethod = Arrays.stream(commandSourceStackClass.getMethods())
-                .filter(method -> method.getReturnType() == CommandSender.class || method.getName().equals("getBukkitSender"))
-                .findFirst()
-                .orElseThrow();
-
+        Method method;
+        try {
+            method = commandSourceStackClass.getMethod("getBukkitSender");
+        } catch (NoSuchMethodException e) {
+            method = Arrays.stream(commandSourceStackClass.getMethods())
+                    .filter(m -> m.getParameterCount() == 0)
+                    .filter(m -> CommandSender.class.isAssignableFrom(m.getReturnType()))
+                    .findFirst()
+                    .orElseThrow();
+        }
+        getBukkitSenderMethod = method;
     }
 
     public static CommandSender toCommandSender(Object commandSource) {
