@@ -11,8 +11,11 @@ import net.minecraft.server.players.NameAndId;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.phys.Vec3;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.slf4j.Logger;
@@ -50,11 +53,18 @@ public class InProcessConnection extends Connection {
 
         // 1.21.9+: player data load moved from placeNewPlayer into the configuration
         // phase (PrepareSpawnTask) which the in-process spawn skips - load it here
-        // (Entity#load restores Pos/Rotation; fresh dolls rely on the PlayerJoin teleport)
+        // (Entity#load restores Pos/Rotation)
         try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(doll.problemPath(), LOGGER)) {
             Optional<ValueInput> data = server.getPlayerList().loadPlayerData(new NameAndId(profile))
                     .map(tag -> TagValueInput.create(reporter, server.registryAccess(), tag));
             data.ifPresent(doll::load);
+
+            if (caller != null) {
+                // spawn at the caller, matching position and facing
+                Location callerLocation = caller.getLocation();
+                doll.setServerLevel(((CraftWorld) callerLocation.getWorld()).getHandle());
+                doll.snapTo(new Vec3(callerLocation.getX(), callerLocation.getY(), callerLocation.getZ()), callerLocation.getYaw(), callerLocation.getPitch());
+            }
 
             DollConnection connection = new DollConnection(doll);
             DOLL_CONNECTIONS.put(profile.id(), connection);
