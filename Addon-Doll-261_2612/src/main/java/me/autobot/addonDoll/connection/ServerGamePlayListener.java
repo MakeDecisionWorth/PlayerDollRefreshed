@@ -11,8 +11,13 @@ public class ServerGamePlayListener extends ServerGamePacketListenerImpl {
     private final ServerDoll doll;
 
     public ServerGamePlayListener(ServerDoll doll, Connection networkmanager, GameProfile profile) {
-        super(doll.getServer(), networkmanager, doll, CommonListenerCookie.createInitial(profile, false));
+        super(doll.level().getServer(), networkmanager, doll, CommonListenerCookie.createInitial(profile, false));
         this.doll = doll;
+    }
+
+    @Override
+    public boolean hasClientLoaded() {
+        return true;
     }
 
     @Override

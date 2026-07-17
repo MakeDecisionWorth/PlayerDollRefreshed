@@ -31,7 +31,6 @@ public class ServerDoll extends ExtServerPlayer implements Doll {
     }
     public ServerDoll(MinecraftServer server, ServerLevel level, GameProfile profile) {
         super(server, level, profile);
-        setClientLoaded(true);
     }
 
     public void setup(Player caller) {
@@ -78,7 +77,7 @@ public class ServerDoll extends ExtServerPlayer implements Doll {
             updateActionPack();
         } else {
             // Add Network task
-            getServer().schedule(getServer().wrapRunnable(this::updateActionPack));
+            level().getServer().schedule(level().getServer().wrapRunnable(this::updateActionPack));
         }
     }
 
@@ -139,10 +138,5 @@ public class ServerDoll extends ExtServerPlayer implements Doll {
     public boolean isLocalPlayer() {
         // Fix boat ticking
         return getVehicle() != null;
-    }
-
-    @Override
-    public boolean hasClientLoaded() {
-        return true;
     }
 }

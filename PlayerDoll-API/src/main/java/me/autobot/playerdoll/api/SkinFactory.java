@@ -45,10 +45,7 @@ public class SkinFactory {
         propertySignature = propertyObject.getAsJsonPrimitive("signature").getAsString();
         propertyValue = propertyObject.getAsJsonPrimitive("value").getAsString();
 
-        GameProfile profile = new GameProfile(getUUIDFromStripedUUID(stringUUID), name);
-        ProfileUtil.properties(profile).put("textures", new Property("textures", propertyValue, propertySignature));
-
-        return profile;
+        return ProfileUtil.withTextures(new GameProfile(getUUIDFromStripedUUID(stringUUID), name), propertyValue, propertySignature);
     }
 
     public static InputStreamReader urlToJson(String website, String addition) {

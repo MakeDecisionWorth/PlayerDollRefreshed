@@ -200,9 +200,9 @@ public final class PlayerDoll extends JavaPlugin implements PlayerDollPlugin {
             DollStorage.PLAYER_CREATION_COUNTS.merge(ownerUUID, 1, Integer::sum);
             // auto Join
             if (config.dollSetting.get(GlobalFlagButton.JOIN_AT_START).getValue()) {
-                GameProfile profile = new GameProfile(UUID.fromString(config.dollUUID.getValue()), dollIdentifier.concat(config.dollName.getValue()));
-                ProfileUtil.properties(profile).clear();
-                ProfileUtil.properties(profile).put("textures", new Property("textures", config.skinProperty.getValue(), config.skinSignature.getValue()));
+                GameProfile profile = ProfileUtil.withTextures(
+                        new GameProfile(UUID.fromString(config.dollUUID.getValue()), dollIdentifier.concat(config.dollName.getValue())),
+                        config.skinProperty.getValue(), config.skinSignature.getValue());
                 Runnable r = () -> dollConnection.connect(profile, null);
                 PlayerDollAPI.getScheduler().globalTaskDelayed(r, delayOfEach * 20 * index);
                 index++;
