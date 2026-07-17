@@ -34,7 +34,7 @@ public final class BasicConfig extends AbstractConfig {
         super(configFile, true);
         List<String> emptyStrList = new ArrayList<>(Collections.singletonList(""));
         this.pluginLanguage = new ConfigKey<>(this,"plugin-language", "default");
-        this.checkUpdate = new ConfigKey<>(this,"check-update", true);
+        this.checkUpdate = new ConfigKey<>(this,"check-update", false);
 //        this.updateReplaceConfig = new ConfigKey<>(this,"update-replace-config",false);
         this.dollIdentifier = new ConfigKey<>(this, "doll-identifier", "-");
 

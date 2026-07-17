@@ -5,7 +5,7 @@ version: 32
 # it loads language/EXAMPLE.yml
 plugin-language: default
 
-check-update: true
+check-update: false
 
 # Force Replacing old configs to the latest configs (base on config version)
 # true: Replace all existing configs with default value (with comments)
