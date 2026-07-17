@@ -9,8 +9,17 @@ import java.nio.file.Path;
 public final class FileUtil {
 
     private final Path pluginPath;
-    private final Path playerDataDir = Bukkit.getServer().getWorldContainer().toPath().resolve("world").resolve("playerdata");
+    private final Path playerDataDir = resolvePlayerDataDir();
     private Path dollDir;
+
+    private static Path resolvePlayerDataDir() {
+        Path worldDir = Bukkit.getWorlds().isEmpty()
+                ? Bukkit.getServer().getWorldContainer().toPath().resolve("world")
+                : Bukkit.getWorlds().get(0).getWorldFolder().toPath();
+        // 26.1+ moved playerdata to players/data
+        Path players = worldDir.resolve("players").resolve("data");
+        return players.toFile().isDirectory() ? players : worldDir.resolve("playerdata");
+    }
     private Path languageDir;
     private Path addonDir;
     //private Path backupDir;

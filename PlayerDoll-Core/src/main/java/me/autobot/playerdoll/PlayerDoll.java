@@ -225,7 +225,7 @@ public final class PlayerDoll extends JavaPlugin implements PlayerDollPlugin {
             throw new RuntimeException(e);
         }
         Pattern pattern = Pattern.compile("addon/(.*)\\.jar");
-        String bukkitVersion = Bukkit.getBukkitVersion().split("-")[0];
+        String bukkitVersion = Bukkit.getMinecraftVersion();
 
         for (URL url : urlList) {
             AddonClassLoader loader = new AddonClassLoader();
