@@ -103,7 +103,8 @@ public class PackPlayerImpl extends AbsPackPlayer {
 
     @Override
     public WInteractionResult<InteractionResult> interactOn(WEntity<?> entity, Enum<?> hand) {
-        InteractionResult result = serverPlayer.interactOn(((WEntityImpl)entity).getInstance(), (InteractionHand) hand);
+        // 26.1: full interaction already happens in WEntityImpl#interactAt (merged interactOn)
+        InteractionResult result = InteractionResult.PASS;
         Class<? extends WInteractionResult<InteractionResult>> wrapper = (Class<? extends WInteractionResult<InteractionResult>>) WrapperRegistry.getWrapper(WInteractionResult.class, result);
         return WrapperRegistry.wrapFrom(wrapper, result);
     }

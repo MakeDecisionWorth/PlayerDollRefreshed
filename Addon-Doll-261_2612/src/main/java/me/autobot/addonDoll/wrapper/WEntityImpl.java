@@ -42,7 +42,8 @@ public class WEntityImpl extends WEntity<Entity> {
 
     @Override
     public WInteractionResult<InteractionResult> interactAt(AbsPackPlayer player, WVec3<?> relativeHitPos, Enum<?> hand) {
-        InteractionResult result = entity.interactAt(((PackPlayerImpl)player).getServerPlayer() , new Vec3(relativeHitPos.x(), relativeHitPos.y(), relativeHitPos.z()), (InteractionHand) hand);
+        // 26.1: interactAt merged into interactOn(entity, hand, location)
+        InteractionResult result = ((PackPlayerImpl)player).getServerPlayer().interactOn(entity, (InteractionHand) hand, new Vec3(relativeHitPos.x(), relativeHitPos.y(), relativeHitPos.z()));
         Class<? extends WInteractionResult<InteractionResult>> wrapper = (Class<? extends WInteractionResult<InteractionResult>>) WrapperRegistry.getWrapper(WInteractionResult.class, result);
         return WrapperRegistry.wrapFrom(wrapper, result);
     }
