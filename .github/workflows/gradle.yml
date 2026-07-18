@@ -47,11 +47,14 @@ jobs:
     # - name: Build with Gradle 8.9
     #   run: gradle build
 
+    - name: Collect Output JARs
+      run: ./gradlew collectOutput
+
     - name: Save Build Artifact
       uses: actions/upload-artifact@v4
       with:
         name: gradle-build-output
-        path: build/libs/*.jar
+        path: Output/*.jar
 
   dependency-submission:
 
