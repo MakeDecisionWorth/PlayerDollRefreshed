@@ -1,11 +1,19 @@
 package me.autobot.addonDoll.connection;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOutboundHandlerAdapter;
+import io.netty.channel.ChannelPromise;
 import io.netty.channel.embedded.EmbeddedChannel;
+import io.netty.util.ReferenceCountUtil;
 import me.autobot.addonDoll.player.ServerDoll;
 import me.autobot.playerdoll.api.PlayerDollAPI;
 import me.autobot.playerdoll.api.ReflectionUtil;
 import net.minecraft.network.Connection;
+import net.minecraft.network.HandlerNames;
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.ProtocolInfo;
 import net.minecraft.network.protocol.Packet;
@@ -35,7 +43,28 @@ public class DollConnection extends Connection {
     public DollConnection(ServerDoll doll) {
         super(PacketFlow.SERVERBOUND);
         this.doll = doll;
-        new EmbeddedChannel(this);
+        new EmbeddedChannel(new ChannelInitializer<Channel>() {
+            @Override
+            protected void initChannel(Channel channel) {
+                // standard handler names so packet injectors (ProtocolLib etc.) find their anchors;
+                // the head-most handler swallows anything written directly to the channel
+                channel.pipeline()
+                        .addLast("doll_discard", new ChannelOutboundHandlerAdapter() {
+                            @Override
+                            public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) {
+                                ReferenceCountUtil.release(msg);
+                                promise.trySuccess();
+                            }
+                        })
+                        .addLast(HandlerNames.SPLITTER, new ChannelInboundHandlerAdapter())
+                        .addLast(HandlerNames.DECODER, new ChannelInboundHandlerAdapter())
+                        .addLast(HandlerNames.BUNDLER, new ChannelInboundHandlerAdapter())
+                        .addLast(HandlerNames.PREPENDER, new ChannelOutboundHandlerAdapter())
+                        .addLast(HandlerNames.ENCODER, new ChannelOutboundHandlerAdapter())
+                        .addLast(HandlerNames.UNBUNDLER, new ChannelOutboundHandlerAdapter())
+                        .addLast(HandlerNames.PACKET_HANDLER, DollConnection.this);
+            }
+        });
         this.address = new InetSocketAddress(InetAddress.getLoopbackAddress(), 0);
     }
 
