@@ -37,6 +37,7 @@ public class ServerDoll extends ExtServerPlayer implements Doll {
     public void setup(Player caller) {
         this.caller = caller == null ? getBukkitPlayer() : caller;
         this.entityData.set(DATA_PLAYER_MODE_CUSTOMISATION, (byte) 0x7f);
+        applyMetadata();
     }
 
     public void callDollJoinEvent() {

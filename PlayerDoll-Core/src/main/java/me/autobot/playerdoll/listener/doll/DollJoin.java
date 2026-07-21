@@ -19,8 +19,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.LazyMetadataValue;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.Plugin;
 
@@ -82,14 +80,6 @@ public class DollJoin implements Listener {
         }
 
         DollStorage.DOLL_PERMISSIONS.put(player.getUniqueId(),attachment);
-
-        FixedMetadataValue metadataValue = new FixedMetadataValue(plugin, null);
-        for (String metadata : basicConfig.dollMetadata.getValue()) {
-            if (metadata.isEmpty()) {
-                continue;
-            }
-            player.setMetadata(metadata, metadataValue);
-        }
 
         player.setSleepingIgnored(true);
 
